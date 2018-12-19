@@ -1,0 +1,467 @@
+
+basic process monitoring
+=============================
+ps -ef 
+
+ps -ef | grep smon
+
+Hello &   -> running process as backround
+
+sleep 100
+
+
+sleep 100 &
+	-> lets monitor the process 
+	
+		[root@oracle SCRIPTS]# sleep 100 &
+		[1] 2549
+		[root@oracle SCRIPTS]# ps -ef | grep 2549
+		root      2549  2495  0 06:56 pts/0    00:00:00 sleep 100
+		root      2551  2495  0 06:56 pts/0    00:00:00 grep 2549
+		[root@oracle SCRIPTS]# ps -ef | grep 2549
+		root      2549  2495  0 06:56 pts/0    00:00:00 sleep 100
+		root      2553  2495  0 06:56 pts/0    00:00:00 grep 2549
+
+
+
+		
+basic text filtering
+=====================
+
+	-> more and less 
+		ls /proc | more 
+		ls /proc | less
+	
+	
+	-> generate sequence 
+		seq 100 > number.txt
+		
+	-> read top 10 lines 
+		head -10 number.txt 
+	
+	-> read file from 15th line 
+		head +15 number.txt
+		
+		
+	-> read last 100 lines 
+		tail -100 number.txt
+	
+	-> read lines onware 15 
+		tail +15 number.txt
+		
+	-> read line between 61 and 65 
+		head -65 number.txt | tail -5 > log.txt 
+		
+		
+		
+	wc < sample.txt 
+		-> wc prints the number of lines, words, and characters 
+		
+	2-> error
+	1 -> output 
+	2> sample.txt 
+	2>> sample.txt 
+	&> sample.txt 
+	2>&1 
+	1>&2 
+	
+	touch file{1,2,3}
+	touch file{1..3}
+	
+	
+	mkdir directory{1,2,3}{a,b,b}
+	
+	
+	ls /proc/ | grep cpuinfo
+
+	
+	
+working with commands
+=======================
+
+hello ()
+{
+	echo "Hello World";
+}	
+
+
+
+`date`
+$(date)
+
+
+
+read user input
+=====================
+echo "Enter user input: "
+read input 
+echo $input 
+
+
+
+=========================
+
+sort << EOF 
+cherry
+mango
+apple
+banana
+EOF 
+
+
+=========================
+wc -w << EOF 
+there are major earthquake 
+on april 15, 2015 
+in nepal.
+Ther was huge loss of human life in nepal.
+EOF 
+
+
+====================
+
+#!/bin/bash 
+
+tar -cvf /dev/st0 /home/student 2>/dev.null
+
+# store the status of tar operation in variable status 
+[ $? -eq ] && status = "Sucess" || status = "Failed"
+
+# send email to administrator
+mail -s 'Backup status ' test@mail.com <<End_of_message
+The backup job has been finished
+End Date : $(date)
+Status : $status 
+End_of_message
+
+
+
+==========================
+#!/bin/bash 
+# wall utility is used to send mail to all login users
+
+wall << EOF
+Tomorrow, on friday evening, we will be celebrating
+birthday of our colleagues
+John.
+
+Best Regards.
+Gyan
+
+EOF
+
+
+
+
+script for file transfer
+=========================
+#!/bin/bash 
+# checking the number of arguments passed along with command 
+
+if [ $# -lt 2 ] 
+then 
+	echo "Error, usage is: "
+	echo "FTPget hostname filename directory"
+	exit -1 
+fi 
+
+hostname=$1 
+filename=$2 
+directory="."  #default set 
+
+if [ $# -ge 3 ]
+then 
+	directory=$3 
+fi 
+
+ftp << End_Of_Session
+open $hostname 
+cd $directory 
+get $filename 
+quit 
+End_Of_Session 
+echo "FTP Session Ended"
+
+
+
+===================
+#!/bin/bash 
+
+a=100 
+if [ $a -eq 100 ]
+then 
+	echo "a is equals to 100"
+else
+	echo "a is not equals to 100"
+
+fi 
+
+
+=============================
+df -h | grep /dev/sda1 | cut -c 40-42
+
+
+
+========================
+#!/bin/bash 
+df -h | grep /dev/sda1 | cut -c 40-42 > test.log 
+read usage < test.log 
+
+if [ $usage -gt 80 ]
+then 
+	echo "Please monitor the space "
+	
+else 
+	echo "Good, there is an enough space available"
+fi 
+
+
+
+
+====================================
+#!/bin/bash 
+
+read filename 
+if test -e $filename 
+then 
+	echo "file exists"
+else 
+	echo "file does not exist"
+fi 
+
+
+
+==========================
+
+
+#!/bin/bash 
+echo "$1 is: "
+if ! [ -e $1 ]
+then 	
+	echo "..Do not exist"
+	exit 
+else 
+	echo "file is exist"
+fi 
+
+if [ -x $1 ]
+then 
+	echo "..Executable"
+fi 
+
+if [ -r $1 ]
+then 
+	echo ".. Readable"
+fi 
+
+if [ -w $1 ]
+then 
+	echo "..Writable"
+fi 
+
+=============
+&& logical or 
+|| will be executed if first condition is false 
+
+
+===============================
+#!/bin/bash
+# check directory 
+
+echo "Enter the directory name: "
+read file 
+
+if [[ -d $file]]
+then
+	echo "$file is an directory"
+elif [[-f $file]]
+then 
+	echo "$file is a file"
+else 
+	echo "$file is neither directory nor file"
+fi 
+
+
+
+=============================
+for command in clear date cal
+do 
+	sleep 2 
+	$command 
+done 
+
+
+
+====================
+#!/bin/bash 
+# simple for loop 
+for var in {1..10}
+do
+	echo $var 
+done 
+
+
+
+=====================
+#!/bin/bash 
+
+max=10 
+for ((i=1; i<=max; i++))
+do 
+	echo -n "$i	"
+done 
+
+
+
+
+for var in 11 12 13 14 15 16 17 18 19 20 
+do 
+	echo $var 
+done 
+
+==================
+
+#!/bin/bash 
+for filename in *.c 
+do 
+	echo "copying $filename to $filename.bk"
+	cp $filename $filename.bk 
+done 
+
+
+
+
+===================
+
+#!/bin/bash 
+for x in 1 2 3 
+do 
+	echo befor $x 
+	continue 1 
+	ech after $x 
+done 
+exit 0 
+
+
+
+=================================
+
+#!/bin/bash 
+for x in 1 2 3 
+do 
+	echo before $x
+	continue 1 
+	echo after $x 
+done 
+exit 0 
+
+
+========================
+
+
+#!/bin/bash 
+
+for file in sample*
+
+do 
+	if [ -d "$file" ]
+	then 
+		echo "skipping directory"
+		continue 
+	fi 
+	echo file is $file 
+done 
+rm -rf sample*
+exit 0 
+
+
+===========================
+
+
+#!/bin/bash 
+for FILE in 'ls *.mp3'
+do 
+	if test -ef /MP3/$FILE 
+
+	
+=========================
+check file, directory 
+
+#!/bin/bash 
+# check if file is directory 
+[ -d work ]
+echo $?
+
+# check that it is file 
+
+[ -f text.txt ]
+echo $?
+
+# check if the file size is greater than zero 
+[ -s text.txt ]
+echo $?
+
+
+
+===============================
+grep "$city" city_database_file >& /dev/null 
+
+
+
+=======================Function==============
+
+#!/bin/bash 
+yesno()
+{
+while true
+do 
+echo "$*"
+echo "Please enter answer yes or no"
+read reply
+case $reply in 
+yes)
+echo "You answer yes"
+return 0
+;;
+no)
+echo "You answered no"
+return 1 
+;;
+*)
+echo "invalid answer"
+;;
+esac
+done 
+}
+
+yesno 
+
+
+
+
+=========================
+
+#!/bin/bash 
+while true 
+do 
+	echo "Enter dough' to exit"
+	read string 
+	if [ "$string" = "dough" ]
+	then 
+		break
+	fi 
+done 
+echo "you are exiting normally"
+
+
+
+
+=========================
+run scripts on background 
+
+	nohop command & 
+	
+
+	
+================================
+
